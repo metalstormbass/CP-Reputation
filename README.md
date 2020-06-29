@@ -1,6 +1,6 @@
 # CP-Reputation
 
-<img src="https://img.shields.io/badge/Version-1.0.0a-red" /><img src="https://img.shields.io/badge/python-3.6-success" />
+<img src="https://img.shields.io/badge/Version-1.0.0a-red" /> <img src="https://img.shields.io/badge/python-3.6-success" />
 
 
 #### How it works
