@@ -1,6 +1,7 @@
 import requests
 import sys
 import json
+from termcolor import colored, cprint 
 
 
 #remove https warning
@@ -45,9 +46,21 @@ def post (token, client_key, resource, res_type):
     try:
         rep_response = requests.post(rep_url, json=json_data, headers=headers, verify=False)
         rep_response_json = json.loads(rep_response.content)
+        
+        status = rep_response_json['response'][0]['reputation']['classification']   
         print (json.dumps(rep_response_json, indent=4, sort_keys=True))
+        
+        print ("\n")
+        if status == "Benign":
+            print ("The resource "+resource+" is:")
+            cprint(status, 'green', attrs=['bold'], file=sys.stderr) 
+        else: 
+            print ("The resource "+resource+" is:")
+            cprint(status, 'red', attrs=['bold'], file=sys.stderr) 
+        print ("\n")
 
     except Exception as error:
+        
         print ("Error Occured")
         print (error)
         sys.exit()     
