@@ -1,5 +1,7 @@
 import requests
+import sys
 import json
+
 
 #remove https warning
 requests.packages.urllib3.disable_warnings()
@@ -14,9 +16,8 @@ def auth_token(url, client_key):
             }
     try:
         response = requests.get(url, headers=headers, verify=False)
-        #response_json = json.loads(response.content)
-        print (response.content)
-        #return response_json
+        #print (response.content)
+        return response.content
     
     except Exception as error:
             print ("Error Occured")
@@ -25,26 +26,92 @@ def auth_token(url, client_key):
             
 
 #Post Functionality     
-def post (token, client_key, json_data):
-        headers = {
-            'content-type': "application/json",
-        }
+def post (token, client_key, resource, res_type):
+    
+    rep_url = "https://rep.checkpoint.com/"+res_type+"-rep/service/v2.0/query?resource="+resource
+    
+    json_data = {
+    "request": [{
+        "resource": resource
+    }]
+       }
+    
+    headers = {
+                'content-type': "application/json",
+                'Client-Key': client_key,
+                "token" : token
+            }
         
-        try:
-            response = requests.post(url, json=json_data, headers=headers, verify=False)
-            response_json = json.loads(response.content)
-            #print (response_json)
-            return response_json
+    try:
+        rep_response = requests.post(rep_url, json=json_data, headers=headers, verify=False)
+        rep_response_json = json.loads(rep_response.content)
+        print (json.dumps(rep_response_json, indent=4, sort_keys=True))
 
-        except Exception as error:
-            print ("Error Occured")
-            print (error)
-            sys.exit()     
-
-
+    except Exception as error:
+        print ("Error Occured")
+        print (error)
+        sys.exit()     
+                        
             
-#Main Functionality
+#Title 
+print ('''
+                                                                                                 
+ @@@@@@@  @@@  @@@  @@@@@@@@   @@@@@@@  @@@  @@@     @@@@@@@    @@@@@@   @@@  @@@  @@@  @@@@@@@  
+@@@@@@@@  @@@  @@@  @@@@@@@@  @@@@@@@@  @@@  @@@     @@@@@@@@  @@@@@@@@  @@@  @@@@ @@@  @@@@@@@  
+!@@       @@!  @@@  @@!       !@@       @@!  !@@     @@!  @@@  @@!  @@@  @@!  @@!@!@@@    @@!    
+!@!       !@!  @!@  !@!       !@!       !@!  @!!     !@!  @!@  !@!  @!@  !@!  !@!!@!@!    !@!    
+!@!       @!@!@!@!  @!!!:!    !@!       @!@@!@!      @!@@!@!   @!@  !@!  !!@  @!@ !!@!    @!!    
+!!!       !!!@!!!!  !!!!!:    !!!       !!@!!!       !!@!!!    !@!  !!!  !!!  !@!  !!!    !!!    
+:!!       !!:  !!!  !!:       :!!       !!: :!!      !!:       !!:  !!!  !!:  !!:  !!!    !!:    
+:!:       :!:  !:!  :!:       :!:       :!:  !:!     :!:       :!:  !:!  :!:  :!:  !:!    :!:    
+ ::: :::  ::   :::   :: ::::   ::: :::   ::  :::      ::       ::::: ::   ::   ::   ::     ::    
+ :: :: :   :   : :  : :: ::    :: :: :   :   :::      :         : :  :   :    ::    :      :   ''')
+       
+print("\n")
+print ("Reputation Check for files, URLs & IP Adresses")
+print ("Version 1.0 - Written by Michael Braun")
+print("\n")
+                 
+            
+#Main Functionality - Gather info and send to authentication
 
 client_key = input("Enter your API Key: ")
 
-auth_token(url,client_key)
+token = auth_token(url,client_key)
+token = token.decode('utf-8')
+
+
+#Menu Options
+selection=True
+while selection:
+    print ("Select option: \n")
+    print("""
+    1. Check a URL
+    2. Check an IP Address
+    3. Check a file (MD5 Hash)
+    4. Exit/Quit
+    """)
+    selection=input("Select a task number: ")
+    if selection=="1":
+        res_type = "url"
+        resource = input("Enter URL: ")
+
+        post(token, client_key, resource, res_type)
+    
+    elif selection=="2":
+            res_type = "ip"
+            resource = input("Enter IP address: ")
+
+            post(token, client_key, resource, res_type)
+    elif selection=="3":
+            res_type = "file"
+            resource = input("Enter file MD5 Hash: ")
+
+            post(token, client_key, resource, res_type)     
+    elif selection=="4":
+        print("\nGoodbye")
+        sys.exit() 
+        selection = None
+    else:
+        print("\n Not Valid Choice. Try again.")
+
