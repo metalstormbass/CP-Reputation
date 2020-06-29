@@ -1,7 +1,7 @@
 import requests
 import sys
 import json
-from termcolor import colored, cprint 
+
 
 
 #remove https warning
@@ -52,11 +52,11 @@ def post (token, client_key, resource, res_type):
         
         print ("\n")
         if status == "Benign":
-            print ("The resource "+resource+" is:")
-            cprint(status, 'green', attrs=['bold'], file=sys.stderr) 
+            print ("The resource "+resource+" is: " + status)
+            
         else: 
-            print ("The resource "+resource+" is:")
-            cprint(status, 'red', attrs=['bold'], file=sys.stderr) 
+            print ("The resource "+resource+" is: " + status)
+            
         print ("\n")
 
     except Exception as error:
